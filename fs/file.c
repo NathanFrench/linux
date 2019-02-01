@@ -401,6 +401,9 @@ struct files_struct *get_files_struct(struct task_struct *task)
 {
 	struct files_struct *files;
 
+    printk(KERN_WARNING "derp %p\n", task);
+
+
 	task_lock(task);
 	files = task->files;
 	if (files)

@@ -257,6 +257,18 @@ out:
 	return error;
 }
 
+SYSCALL_DEFINE1(ellzey, char *, msg) {
+    char buf[256];
+    long copied = strncpy_from_user(buf, msg, sizeof(buf));
+
+    if (copied < 0 || copied == sizeof(buf)) {
+        return -EFAULT;
+    }
+
+    printk("fjdksl %s\n", buf);
+    return 0;
+}
+
 /*
  * Ugh. To avoid negative return values, "getpriority()" will
  * not return the normal nice-value, but a negated value that
@@ -2648,3 +2660,4 @@ COMPAT_SYSCALL_DEFINE1(sysinfo, struct compat_sysinfo __user *, info)
 	return 0;
 }
 #endif /* CONFIG_COMPAT */
+

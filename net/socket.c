@@ -302,8 +302,17 @@ static const struct super_operations sockfs_ops = {
  */
 static char *sockfs_dname(struct dentry *dentry, char *buffer, int buflen)
 {
-	return dynamic_dname(dentry, buffer, buflen, "socket:[%lu]",
-				d_inode(dentry)->i_ino);
+    struct socket * socket = SOCKET_I(dentry->d_inode);
+    struct sock   * sk     = socket->sk;
+    int             state  = inet_sk_state_load(sk);
+
+	return dynamic_dname(dentry, buffer, buflen, "socket:[%lu:%d:%d:%d:%u/%d:%u/%d]",
+				d_inode(dentry)->i_ino, socket->type, state, 
+                socket->sk->__sk_common.skc_family,
+                socket->sk->__sk_common.skc_rcv_saddr,
+                socket->sk->__sk_common.skc_num,
+                socket->sk->__sk_common.skc_daddr,
+                socket->sk->__sk_common.skc_dport);
 }
 
 static const struct dentry_operations sockfs_dentry_operations = {
