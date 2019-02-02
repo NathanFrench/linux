@@ -220,17 +220,17 @@ static int show_stat_j(struct seq_file *p, void *v)
 
     seq_printf(p,
             "{\n"
-            " cpu:{\n"
-            "    user   :   %llu\n"
-            "    nice   :   %llu\n"
-            "    system :   %llu\n"
-            "    idle   :   %llu\n"
-            "    iowait :   %llu\n"
-            "    irq    :   %llu\n"
-            "    softirq:   %llu\n"
-            "    steal  :   %llu\n"
-            "    guest  :   %llu\n"
-            "    gnice  :   %llu\n"
+            " \"cpu\":{\n"
+            "    \"user\"   :   %llu,\n"
+            "    \"nice\"   :   %llu,\n"
+            "    \"system\" :   %llu,\n"
+            "    \"idle\"   :   %llu,\n"
+            "    \"iowait\" :   %llu,\n"
+            "    \"irq\"    :   %llu,\n"
+            "    \"softirq\":   %llu,\n"
+            "    \"steal\"  :   %llu,\n"
+            "    \"guest\"  :   %llu,\n"
+            "    \"gnice\"  :   %llu\n"
             " },\n",
             nsec_to_clock_t(user),
             nsec_to_clock_t(nice),
@@ -257,17 +257,17 @@ static int show_stat_j(struct seq_file *p, void *v)
 		guest_nice = kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
 
         seq_printf(p, 
-            " cpu%d:{\n"
-            "    user   :   %llu\n"
-            "    nice   :   %llu\n"
-            "    system :   %llu\n"
-            "    idle   :   %llu\n"
-            "    iowait :   %llu\n"
-            "    irq    :   %llu\n"
-            "    softirq:   %llu\n"
-            "    steal  :   %llu\n"
-            "    guest  :   %llu\n"
-            "    gnice  :   %llu\n"
+            " \"cpu%d\":{\n"
+            "    \"user\"   :   %llu,\n"
+            "    \"nice\"   :   %llu,\n"
+            "    \"system\" :   %llu,\n"
+            "    \"idle\"   :   %llu,\n"
+            "    \"iowait\" :   %llu,\n"
+            "    \"irq\"    :   %llu,\n"
+            "    \"softirq\":   %llu,\n"
+            "    \"steal\"  :   %llu,\n"
+            "    \"guest\"  :   %llu,\n"
+            "    \"gnice\"  :   %llu\n"
             " },\n", i,
             nsec_to_clock_t(user),
             nsec_to_clock_t(nice),
@@ -279,44 +279,29 @@ static int show_stat_j(struct seq_file *p, void *v)
 	        nsec_to_clock_t(steal),
 	        nsec_to_clock_t(guest),
 	        nsec_to_clock_t(guest_nice));
-
-
 	}
 
-    seq_printf(p, " intr:[\n");
+    seq_printf(p, " \"intr\":[ ");
 
     int first = 0;
 
     for_each_irq_nr(j) 
-        seq_printf(p, "%llu,\n", kstat_irqs_usr(j)); 
+        seq_printf(p, "%llu, ", kstat_irqs_usr(j)); 
 
-    seq_printf(p, " ],\n");
-
-#if 0
-	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
-
-	/* sum again ? it could be updated? */
-	for_each_irq_nr(j)
-		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
-
-	seq_printf(p,
-		"\nctxt %llu\n"
-		"btime %llu\n"
-		"processes %lu\n"
-		"procs_running %lu\n"
-		"procs_blocked %lu\n",
+    seq_printf(p, 
+            "  ],\n"
+            "  \"ctxt\"          : %llu,\n"
+            "  \"btime\"         : %llu,\n"
+            "  \"processes\"     : %lu,\n" 
+            "  \"procs_running\" : %lu,\n"
+            "  \"procs_blocked\" : %lu\n",
 		nr_context_switches(),
 		(unsigned long long)boottime.tv_sec,
 		total_forks,
 		nr_running(),
 		nr_iowait());
 
-	seq_put_decimal_ull(p, "softirq ", (unsigned long long)sum_softirq);
-
-	for (i = 0; i < NR_SOFTIRQS; i++)
-		seq_put_decimal_ull(p, " ", per_softirq_sums[i]);
-	seq_putc(p, '\n');
-#endif
+    seq_printf(p, "}\n");
 
 	return 0;
 }
